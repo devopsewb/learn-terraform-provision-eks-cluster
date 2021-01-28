@@ -11,22 +11,31 @@ module "eks" {
   }
 
   vpc_id = module.vpc.vpc_id
+   
+    
+    node_groups_defaults = {
+    ami_type  = "AL2_x86_64"
+    disk_size = 50
+  }
 
-  worker_groups = [
-    {
-      name                          = "worker-group-1"
-      instance_type                 = "t2.small"
-      additional_userdata           = "echo foo bar"
-      asg_desired_capacity          = 2
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_one.id]
-    },
-    {
-      name                          = "worker-group-2"
-      instance_type                 = "t2.medium"
-      additional_userdata           = "echo foo bar"
-      additional_security_group_ids = [aws_security_group.worker_group_mgmt_two.id]
-      asg_desired_capacity          = 1
-    },
+  node_groups = {
+    example = {
+      desired_capacity = 3
+      max_capacity     = 3
+      min_capacity     = 3
+
+      instance_type = "m5a.xlarge"
+      k8s_labels = {
+        Environment = "test"
+        GithubRepo  = "terraform-aws-eks"
+        GithubOrg   = "terraform-aws-modules"
+      }
+      additional_tags = {
+        ExtraTag = "ewaw-eks"
+      }
+    }
+  }
+}  
   ]
 }
 
